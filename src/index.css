@@ -16,3 +16,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Handsontable custom styles */
+.htHeaderRow {
+  background-color: #f3f4f6 !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+}
+
+.htFormulaCell {
+  background-color: #ecfdf5 !important;
+  color: #059669 !important;
+  font-family: monospace !important;
+}

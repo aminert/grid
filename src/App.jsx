@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { Dropdown, Metric, BarChart, DebugPanel } from './grid/components.jsx';
 import { useCell, useRange } from './grid/hooks.js';
 import { initializeGrid } from './setup.js';
-import { SpreadsheetViewer } from './SpreadsheetViewer.jsx';
+import { SpreadsheetViewer } from './SpreadsheetViewer2.jsx';
 
 /**
  * Filtered data table component
