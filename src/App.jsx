@@ -204,7 +204,7 @@ const styles = {
   },
   mainTabActive: {
     backgroundColor: '#3b82f6',
-    borderColor: '#3b82f6',
+    border: '2px solid #3b82f6',
     color: 'white',
     boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)',
   },

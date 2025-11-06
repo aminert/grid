@@ -113,9 +113,10 @@ function HandsontableSheet({ sheetName }) {
     const sheetId = Grid.hf.getSheetId(sheetName);
     if (sheetId === undefined) return;
 
-    // Get sheet dimensions
-    const height = Grid.hf.getSheetHeight(sheetId);
-    const width = Grid.hf.getSheetWidth(sheetId);
+    // Get sheet dimensions - use getSheetDimensions API
+    const dimensions = Grid.hf.getSheetDimensions(sheetId);
+    const height = dimensions.height;
+    const width = dimensions.width;
 
     // Extract data from HyperFormula
     const data = [];
@@ -226,7 +227,9 @@ const styles = {
   tab: {
     padding: '12px 20px',
     backgroundColor: 'transparent',
-    border: 'none',
+    borderTop: 'none',
+    borderLeft: 'none',
+    borderRight: 'none',
     borderBottom: '3px solid transparent',
     cursor: 'pointer',
     fontSize: '14px',
@@ -237,7 +240,7 @@ const styles = {
   },
   tabActive: {
     color: '#3b82f6',
-    borderBottomColor: '#3b82f6',
+    borderBottom: '3px solid #3b82f6',
   },
   summary: {
     backgroundColor: 'white',
