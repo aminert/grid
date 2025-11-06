@@ -12,6 +12,11 @@ import { HyperFormula } from 'hyperformula';
 
 class GridEngine {
   constructor() {
+    this.initialized = false;
+    this._initialize();
+  }
+
+  _initialize() {
     // Initialize HyperFormula with configuration
     this.hf = HyperFormula.buildEmpty({
       licenseKey: 'gpl-v3',
@@ -34,6 +39,29 @@ class GridEngine {
 
     // Track which named cells depend on which other named cells
     this.dependencies = new Map();
+  }
+
+  /**
+   * Reset the Grid to initial state (useful for re-initialization)
+   */
+  reset() {
+    this.initialized = false;
+    this._initialize();
+    console.log('Grid reset');
+  }
+
+  /**
+   * Check if Grid has been set up with data
+   */
+  isInitialized() {
+    return this.initialized && this.tables.size > 0;
+  }
+
+  /**
+   * Mark Grid as initialized
+   */
+  markInitialized() {
+    this.initialized = true;
   }
 
   /**

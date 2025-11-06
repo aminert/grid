@@ -38,6 +38,12 @@ function generateTestData() {
  * Initialize the Grid with data and formulas
  */
 export function initializeGrid() {
+  // Check if already initialized (handles React StrictMode double-render)
+  if (Grid.isInitialized()) {
+    console.log('⚡ Grid already initialized, skipping...');
+    return;
+  }
+
   console.log('🚀 Initializing Grid POC...');
 
   // 1. Load test sales data
@@ -114,7 +120,11 @@ export function initializeGrid() {
   // We'll pass the table reference directly to components
   Grid.defineNamedCell('recentSales', 'sales');
 
+  // Mark as initialized
+  Grid.markInitialized();
+
+  const namedCellsCount = Object.keys(Grid.getAllNamedCells()).length;
   console.log('✅ Grid initialized successfully!');
   console.log('📊 Loaded', salesData.length - 1, 'sales records');
-  console.log('🔧 Defined', Grid.getAllNamedCells().length, 'named cells/ranges');
+  console.log('🔧 Defined', namedCellsCount, 'named cells/ranges');
 }
