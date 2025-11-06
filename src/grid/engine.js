@@ -99,12 +99,21 @@ class GridEngine {
   /**
    * Define a named cell with a formula or static value
    * @param {string} name - Name of the cell (e.g., "totalRevenue")
-   * @param {string|number} formulaOrValue - Formula (starting with =) or static value
+   * @param {string|number|Array} formulaOrValue - Formula (starting with =), static value, or array
    */
   defineNamedCell(name, formulaOrValue) {
     const isFormula = typeof formulaOrValue === 'string' && formulaOrValue.startsWith('=');
+    const isArray = Array.isArray(formulaOrValue);
 
-    if (isFormula) {
+    if (isArray) {
+      // It's an array - store it directly without using HyperFormula
+      this.namedCells.set(name, {
+        type: 'array',
+        value: formulaOrValue,
+      });
+
+      console.log(`Defined array cell "${name}":`, formulaOrValue);
+    } else if (isFormula) {
       // It's a formula - parse and track dependencies
       const formula = formulaOrValue.substring(1); // Remove leading =
       const processedFormula = this._processFormula(formula);
@@ -156,6 +165,11 @@ class GridEngine {
       return undefined;
     }
 
+    // If it's an array type, return the stored value directly
+    if (cell.type === 'array') {
+      return cell.value;
+    }
+
     // Get fresh value from HyperFormula
     const value = this.hf.getCellValue(cell.address);
     cell.value = value;
@@ -196,6 +210,11 @@ class GridEngine {
     if (!cell) {
       console.warn(`Named range "${name}" not found`);
       return undefined;
+    }
+
+    // If it's an array type, return the stored value directly
+    if (cell.type === 'array') {
+      return cell.value;
     }
 
     const value = this.hf.getCellValue(cell.address);

@@ -56,15 +56,8 @@ export function initializeGrid() {
   // 3. Define computed ranges and values
   // These are the formulas AI would generate
 
-  // List of unique regions (for dropdown)
-  Grid.defineNamedCell('regionList', '=ARRAYFORMULA({"All";"West";"East";"North";"South"})');
-
-  // Filtered sales based on selected region
-  // Note: HyperFormula syntax - we'll use simple approach
-  Grid.defineNamedCell(
-    'filteredSalesCount',
-    '=COUNTIFS(sales[region],selectedRegion)'
-  );
+  // List of unique regions (for dropdown) - defined as a static array
+  Grid.defineNamedCell('regionList', ['All', 'West', 'East', 'North', 'South']);
 
   // Since HyperFormula doesn't support complex FILTER easily, we'll use simpler metrics
   // that work with SUMIF, AVERAGEIF, COUNTIF
@@ -106,11 +99,40 @@ export function initializeGrid() {
     '=IF(selectedRegion="All",SUMIFS(sales[amount],sales[product],"Doohickey"),SUMIFS(sales[amount],sales[product],"Doohickey",sales[region],selectedRegion))'
   );
 
-  // Combine into chart data array
-  Grid.defineNamedCell(
-    'salesByProduct',
-    '=ARRAYFORMULA({{"Widget",widgetSales};{"Gadget",gadgetSales};{"Doohickey",doohickeySales}})'
-  );
+  // Combine into chart data array - will be updated reactively
+  // Helper function to update the array when product sales change
+  const updateSalesByProduct = () => {
+    const widget = Grid.getCell('widgetSales');
+    const gadget = Grid.getCell('gadgetSales');
+    const doohickey = Grid.getCell('doohickeySales');
+
+    // Update the array
+    const chartData = [
+      ['Widget', widget],
+      ['Gadget', gadget],
+      ['Doohickey', doohickey],
+    ];
+
+    // Get existing cell or create new one
+    const existingCell = Grid.namedCells?.get('salesByProduct');
+    if (existingCell) {
+      // Update existing array
+      existingCell.value = chartData;
+      // Manually notify subscribers since we're updating directly
+      Grid._notifySubscribers('salesByProduct');
+    } else {
+      // Create new array cell
+      Grid.defineNamedCell('salesByProduct', chartData);
+    }
+  };
+
+  // Subscribe to changes in product sales to update the array
+  Grid.subscribe('widgetSales', updateSalesByProduct);
+  Grid.subscribe('gadgetSales', updateSalesByProduct);
+  Grid.subscribe('doohickeySales', updateSalesByProduct);
+
+  // Initialize the array
+  updateSalesByProduct();
 
   // For the table, we'll show a filtered subset
   // Since dynamic filtering is complex, we'll create a static view that updates based on metrics
