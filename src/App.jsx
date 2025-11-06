@@ -6,10 +6,11 @@
  * All data and logic lives in the spreadsheet.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dropdown, Metric, BarChart, DebugPanel } from './grid/components.jsx';
 import { useCell, useRange } from './grid/hooks.js';
 import { initializeGrid } from './setup.js';
+import { SpreadsheetViewer } from './SpreadsheetViewer.jsx';
 
 /**
  * Filtered data table component
@@ -127,6 +128,8 @@ function Dashboard() {
  * App Root
  */
 export default function App() {
+  const [activeTab, setActiveTab] = useState('dashboard');
+
   useEffect(() => {
     // Initialize Grid on mount
     initializeGrid();
@@ -134,7 +137,31 @@ export default function App() {
 
   return (
     <div style={styles.app}>
-      <Dashboard />
+      <div style={styles.appHeader}>
+        <h1 style={styles.appTitle}>Grid POC - Spreadsheet-Backed React Apps</h1>
+        <div style={styles.mainTabs}>
+          <button
+            onClick={() => setActiveTab('dashboard')}
+            style={{
+              ...styles.mainTab,
+              ...(activeTab === 'dashboard' ? styles.mainTabActive : {}),
+            }}
+          >
+            📊 Dashboard
+          </button>
+          <button
+            onClick={() => setActiveTab('spreadsheet')}
+            style={{
+              ...styles.mainTab,
+              ...(activeTab === 'spreadsheet' ? styles.mainTabActive : {}),
+            }}
+          >
+            📋 Spreadsheet
+          </button>
+        </div>
+      </div>
+
+      {activeTab === 'dashboard' ? <Dashboard /> : <SpreadsheetViewer />}
     </div>
   );
 }
@@ -146,6 +173,40 @@ const styles = {
     minHeight: '100vh',
     backgroundColor: '#f3f4f6',
     padding: '20px',
+  },
+  appHeader: {
+    maxWidth: '1400px',
+    margin: '0 auto 32px',
+    textAlign: 'center',
+  },
+  appTitle: {
+    fontSize: '32px',
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: '24px',
+  },
+  mainTabs: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '12px',
+    marginBottom: '8px',
+  },
+  mainTab: {
+    padding: '14px 32px',
+    backgroundColor: 'white',
+    border: '2px solid #e5e7eb',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: '600',
+    color: '#6b7280',
+    transition: 'all 0.2s',
+  },
+  mainTabActive: {
+    backgroundColor: '#3b82f6',
+    borderColor: '#3b82f6',
+    color: 'white',
+    boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)',
   },
   dashboard: {
     maxWidth: '1200px',
